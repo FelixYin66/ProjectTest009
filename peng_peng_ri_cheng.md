@@ -6,7 +6,12 @@
 
 # 登录模块
 
-当用户第一次使用App并且查看完App新特性之后，用户进入登录页面```LoginViewController```
+当用户第一次使用App并且查看完App新特性之后，用户进入登录页面```LoginViewController```即可登录
+
+|                      登录功能 |
+| -- |
+
+
 
 
 # 注册模块
