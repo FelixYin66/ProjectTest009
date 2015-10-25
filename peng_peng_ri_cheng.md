@@ -15,7 +15,27 @@
 
 
 
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
 
+    addChildViewController()
+}
+
+///  添加子控制器
+private func addChildViewController() {
+    tabBar.tintColor = UIColor.orangeColor()
+
+    let vc = HomeTableViewController()
+    vc.title = "首页"
+    vc.tabBarItem.image = UIImage(named: "tabbar_home")
+    vc.tabBarItem.selectedImage = UIImage(named: "tabbar_home_highlighted")
+    let nav = UINavigationController(rootViewController: vc)
+
+    addChildViewController(nav)
+}
+
+```
 
 
 
@@ -25,5 +45,5 @@
 
 # 注册模块
 
-
+``````
 
