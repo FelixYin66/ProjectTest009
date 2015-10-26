@@ -453,6 +453,58 @@
 
 
 
+///  右侧导航控制器的导航按钮
+
+-(void)rightNavMenuEvent {
+
+    //手机号
+    
+    NSString *phoneNum = ((CSTextField *)[self.view viewWithTag:100]).text;
+    
+    //验证码
+    
+    NSString *codeNum = ((CSTextField *)[self.view viewWithTag:101]).text;
+    
+    //除去手机号，验证码的空格
+
+    NSString *phoneNum2 = [phoneNum stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSString *codeNum2 = [codeNum stringByReplacingOccurrencesOfString:@" " withString:@""];
+
+
+    //手机号与验证码信息验证
+    
+   if ([phoneNum2 isEqualToString:@""]||phoneNum2==nil) {
+
+        [SVProgressHUD showErrorWithStatus:@"手机号不能为空"];
+
+   } else if (phoneNum2.length!=11) {
+       [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号"];
+   } else if ([codeNum2 isEqualToString:@""]||codeNum2==nil) {
+        [SVProgressHUD showErrorWithStatus:@"验证码不能为空"];
+    } else if (![code isEqualToString:codeNum2]) {
+        [SVProgressHUD showErrorWithStatus:@"验证码错误"];
+    } else {
+        
+        //创建ResetPassWordViewController控制器
+
+        ResetPassWordViewController *resetPassVc = [[[ResetPassWordViewController alloc]init] autorelease];
+        resetPassVc.codeStr = codeNum;
+        resetPassVc.phoneStr = phoneNum;
+        
+        //设置导航控制器可左右移动
+        
+        [self SlideReturnEnable];
+        
+        //push重设密码控制器
+        
+        [self.navigationController pushViewController:resetPassVc animated:YES];
+    }
+
+}
+
+
+
+
 ```
 
 
