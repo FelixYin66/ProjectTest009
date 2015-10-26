@@ -107,6 +107,129 @@
 
 
 
+```swift
+
+///  获取验证码点击事件
+
+-(void)sendEvent {
+    
+    
+    //获取手机号输入框对象
+    
+    CSTextField *tempText = nil;
+    NSString *phoneNum = nil;
+    tempText = (CSTextField *)[self.view viewWithTag:100];
+
+    
+    //去掉输入内容的空格
+    
+    NSString *nameStrTemp = [tempText.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    //验证手机号格式
+    
+    if ([nameStrTemp isEqualToString:@""]) {
+        [SVProgressHUD showErrorWithStatus:@"手机号不能为空"];
+    } else if (nameStrTemp.length != 11) {
+        [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号"];
+    } else {
+        
+        
+        //手机格式输入正确之后的操作
+        
+        
+        
+        //按钮不能被重复点击
+        if (canTouch == NO) {
+            return;
+        }
+        //设置按钮点击状态
+        canTouch = NO;
+        [SVProgressHUD showWithStatus:@"正在验证您的手机号"];
+        
+        phoneNum = tempText.text;
+        
+        //将手机号进行二进制编码
+        
+        NSData *phoneData = [phoneNum dataUsingEncoding:NSASCIIStringEncoding];
+        
+        //将二进制数据进行base64
+        phoneNum = [phoneData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+        
+        NSLog(@"手机号📱encodeResult📱:%@",phoneNum);
+        
+        
+        //发送需要注册的手机号
+        
+        [CCInterface requestVerifyCode:phoneNum backBlock:^(int status, NSDictionary *dictResult) {
+            
+            NSLog(@"当前线程是：🏠🏠🏠🏠🏠%@",[NSThread currentThread]);
+            
+            
+            NSLog(@"dictResult is %@ %@",phoneNum, dictResult);
+            
+            //恢复按钮的”可“被点击的状态
+            canTouch = YES;
+            
+            
+            //判断网络状态码
+            
+            if (status == 200) {
+                
+                
+                //出现异常
+                
+                NSLog(@"注册 验证码 dictresult：%@",dictResult);
+                if (dictResult==NULL) {
+                    [SVProgressHUD dismiss];
+                    return ;
+                }
+                
+                
+                //输入完手机号后，进入的流程....
+                
+                
+                if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                    
+                    //保存返回的验证码
+                    
+                    code = [[[dictResult objectForKey:@"data"] objectForKey:@"code"] copy];
+                    
+                    //定时器秒数
+                    
+                    timers = 120;
+                    
+                    //设置定时器秒数变动按钮信息
+                    
+                    sendPassBtn.userInteractionEnabled = NO;
+                    [sendPassBtn setTitle:[NSString stringWithFormat:@"%ld",(long)timers] forState:UIControlStateNormal];
+                    [sendPassBtn setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
+                    
+                    //将定时器放在当前线程,当前线程是主线程...   注意内存泄露问题
+                    
+                    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(startTimer:) userInfo:nil repeats:YES];
+                    
+                    //友好提醒
+                    [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                    
+                } else {
+                    
+                    //友好提醒
+                    [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+                    
+                }
+            } else {
+                
+            }
+        }];
+        
+    }
+    
+}
+
+
+
+```
+
 
 
 
