@@ -364,6 +364,90 @@
 
 
 ```swift
+///  获取验证码点击事件
+
+-(void)sendEvent {
+    
+    //初始化手机号输入框
+    
+    CSTextField *tempText = (CSTextField *)[self.view viewWithTag:100];
+
+    //去掉输入框内容中包含的空格
+    
+    NSString *nameStrTemp = [tempText.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    //验证输入的手机号格式
+    
+    if ([nameStrTemp isEqualToString:@""]) {
+        [SVProgressHUD showErrorWithStatus:@"手机号不能为空"];
+
+    } else if (nameStrTemp.length != 11) {
+        [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号"];
+    } else {
+        
+        if (canTouch == NO) {
+            return;
+        }
+        
+        //修改按钮被点击的状态
+        
+        canTouch = NO;
+        
+        [SVProgressHUD showWithStatus:@"正在验证您的手机号"];
+
+        
+        //获取所输入手机号
+        
+        NSString *phoneNum = tempText.text;
+        
+        //将所输入手机号进行二进制编码
+        
+        NSData *phoneData = [phoneNum dataUsingEncoding:NSASCIIStringEncoding];
+        
+        //将二进制编码进行Base64
+        
+        phoneNum = [phoneData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+        
+        
+        //将编码后的号码发送给后台
+        
+        [CCInterface requestFindPwCode:phoneNum backBlock:^(int status, NSDictionary *dictResult) {
+            canTouch = YES;
+            if (status == 200) {
+                NSLog(@"找回密码 验证码 dictresult：%@",dictResult);
+                if (dictResult==NULL) {
+                    [SVProgressHUD dismiss];
+                    return ;
+                }
+                
+                
+                //获取服务器返回的状态信息
+                
+                if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                    code = [[[dictResult objectForKey:@"data"] objectForKey:@"code"] copy];
+                    
+                    //设置定时器时长
+                    
+                    timers = 120;
+                    
+                    //设置显示时长的按钮
+
+                    sendPassBtn.userInteractionEnabled = NO;
+                    [sendPassBtn setTitle:[NSString stringWithFormat:@"%ld",(long)timers] forState:UIControlStateNormal];
+                    [sendPassBtn setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
+
+                    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(startTimer:) userInfo:nil repeats:YES];
+                    [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                    
+                } else {
+                    [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+                }
+            } else {
+
+            }
+        }];
+    }
+}
 
 
 
