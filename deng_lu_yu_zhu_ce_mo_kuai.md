@@ -362,7 +362,7 @@
 
 | ```phoneNum``` | **phoneNum**为用户已经注册的手机号 |
 | -- | -- |
-| ```codeNum``` | 1:2 |
+| ```codeNum``` | **codeNum**为用户接收到的验证码 |
 
 
 
