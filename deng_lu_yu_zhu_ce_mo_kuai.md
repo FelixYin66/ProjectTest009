@@ -526,6 +526,93 @@
 
 
 ```swift
+///  点击确认按钮事件
+
+-(void)sendEvent {
+    
+    //获取密码1的文本框对象
+    
+    CSTextField *tempText = (CSTextField *)[self.view viewWithTag:200];
+    
+    //获取密码2的文本框对象
+    
+    CSTextField *tempText2 = (CSTextField *)[self.view viewWithTag:201];
+    
+    //除去密码框的输入的空格
+
+    NSString *tempTextStr = [tempText.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSString *tempTextStr2 = [tempText2.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+
+
+    NSString *messageStr = nil;
+    
+    //两个输入框的内容校验
+    
+    if ([tempTextStr isEqual:@""]||[tempTextStr2 isEqual:@""]||![tempText.text isEqualToString:tempText2.text]) {
+        if (![tempText.text isEqualToString:tempText2.text]) {
+            messageStr = @"两次输入密码不一致";
+        }else {
+            messageStr = @"密码不能为空";
+        }
+
+        [SVProgressHUD showErrorWithStatus:messageStr];
+
+        return;
+        
+    } else {
+        
+        //密码个校验
+        
+        if (tempTextStr.length<6||tempTextStr.length>20) {
+            [SVProgressHUD showErrorWithStatus:@"请输入6-20位密码"];
+            return;
+        }
+        
+    }
+
+    //输入无误，提交
+    
+    if ([tempText.text isEqualToString:tempText2.text]) {
+        if (canTouch == NO) {
+            return;
+        }
+        
+        //修改按钮的点击状态
+        
+        canTouch = NO;
+        
+        
+        //发送重设密码请求
+        
+        [CCInterface requestFindPW:_phoneStr pwWord:tempText.text codeNum:_codeStr backBlock:^(int status, NSDictionary *dictResult) {
+
+            canTouch = YES;
+            if (status == 200) { //http的请求默认协议200 ,成功。
+                if (dictResult==NULL) {
+                    return ;
+                }
+                
+                if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                    [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                    
+                    //dismiss ResetPassWordViewController控制器，进入登录界面
+                    
+                    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+
+                    NSLog(@"重置密码 dictResult is %@",dictResult);
+                    
+                } else {
+                    [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+                }
+            }else{
+                
+                //网络不好，服务器挂掉
+                
+            }
+            
+        }];
+    }
+}
 
 
 
