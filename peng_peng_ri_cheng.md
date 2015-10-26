@@ -18,7 +18,7 @@
 
 ## 登录参数说明：
 
-| ```phoneStr``` | phoneStr为登录用户的手机号 |
+| ```phoneStr``` | ```phoneStr```为登录用户的手机号 |
 | -- | -- |
 | ```passStr``` | passStr为登录用户的密码 |
 
