@@ -20,7 +20,7 @@
 
 | ```phoneStr``` | phoneStr为登录用户的手机号 |
 | -- | -- |
-| 0:2 | 1:2 |
+| ```passStr``` | passStr为登录用户的密码 |
 
 
 
