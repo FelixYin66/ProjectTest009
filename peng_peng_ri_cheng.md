@@ -239,7 +239,90 @@
 
 ![](注册账号2.png)
 
+```swift
+///  导航控制器右侧按钮点击事件
 
+-(void)rightNavMenuEvent {
+    
+    
+    //邮箱文本框
+    
+    NSString *mailStr = ((CSTextField *)[self.view viewWithTag:100]).text;
+    
+    //登录密码文本框
+    
+    NSString *passwordStr = ((CSTextField *)[self.view viewWithTag:101]).text;
+    
+    //确认密码文本框
+    
+    NSString *passwordStr2 = ((CSTextField *)[self.view viewWithTag:102]).text;
+
+    
+    //判断邮箱格式，密码是否合格
+    
+    if (![EmailValidate isValidateEmail:mailStr]) {
+        [SVProgressHUD showErrorWithStatus:@"请输入正确的邮箱格式"];
+    } else if (passwordStr.length<6 || passwordStr.length>20 ||passwordStr2.length<6 || passwordStr2.length>20) {
+        [SVProgressHUD showErrorWithStatus:@"请输入6-20位密码"];
+    } else if (![passwordStr isEqualToString:passwordStr2]) {
+        [SVProgressHUD showErrorWithStatus:@"两次输入密码必须相同"];
+    } else {
+        
+        //邮箱格式，密码都okay
+        
+        [SVProgressHUD showSuccessWithStatus:@"正在提交注册信息"];
+        
+        
+        //发送”注册“网络请求
+        
+        [CCInterface requestRegistered:mailStr pass:passwordStr address:[LoginUserModel getCurrentLoginInfo].usermodel.user_vehicle key:nil openid:nil wtoken:nil sid:nil stoken:nil sname:nil form:@"mail" backBlock:^(int status, NSDictionary *dictResult) {
+
+            NSLog(@"注册 result is %@",dictResult); //13910610155
+            
+            
+            //网络无异常的特殊处理
+            
+            if (status == 200) {
+                if (dictResult==NULL) {
+                    [SVProgressHUD dismiss];
+                    return ;
+                }
+                
+            //注册信息没有任何问题
+                
+                if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                    [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                   
+                    for (int i=0; i<3; i++) {
+                        CSTextField *tempText = (CSTextField *)[self.view viewWithTag:100];
+                        [tempText resignFirstResponder];
+                    }
+                    
+                    //退出注册控制器页面
+                    
+                    [self.navigationController dismissViewControllerAnimated:NO completion:nil];
+                    
+                    AppDelegate *dele = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+                    
+                    //加载主界面所有的子视图
+                    
+                    [dele loadViewController:dictResult];
+                    
+                    //发送通知，用户的ID变化
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:UserIDChangeNoti object:nil];
+                } else {
+                    [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+                }
+            }
+        }];
+    }
+}
+
+
+
+
+```
 
 
 
