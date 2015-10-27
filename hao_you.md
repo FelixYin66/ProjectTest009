@@ -286,5 +286,40 @@
 
 
 
+#pragma mark filteredFriendArray
+
+
+//使用“谓词”筛选数组中的好友，并刷新UITableView的数据
+
+-(void)filteredFriendArray{
+    
+    [result removeAllObjects];
+    
+    NSString *searchStirng = self.searchDisplayController.searchBar.text;
+    BOOL isContainChinese = [self isStringContainChinese:searchStirng];
+    
+    NSPredicate *predicate;
+    
+    
+    //  设置谓词筛选条件
+    
+    if (isContainChinese) {
+        
+        predicate = [NSPredicate predicateWithFormat:@"user_name contains[cd] %@", searchStirng];
+    }else {
+        
+        searchStirng = [searchStirng stringByAppendingString:@"*"];
+        predicate = [NSPredicate predicateWithFormat:@"pinyin like[cd] %@", searchStirng];
+        
+    }
+    
+    //将筛选完的数组保存在result中
+    
+    [result addObjectsFromArray:[muArrFriends filteredArrayUsingPredicate:predicate]];
+
+}
+
+
+
 
 ```
