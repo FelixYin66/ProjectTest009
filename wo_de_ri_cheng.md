@@ -10,7 +10,7 @@
 
 | ```MySchViewController``` | 此为我的日程控制器，负责展示所有的日程记录 |
 | -- | -- |
-| ```SchDetailViewController``` |  |
+| ```SchDetailViewController``` | 此为展示单个日程记录详情的控制器 |
 | 0:3 | 1:3 |
 
 
