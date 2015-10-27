@@ -10,7 +10,7 @@
 
 | ```AddScheduleViewController``` | 此为添加日程控制器 |
 | -- | -- |
-| ```AddCityViewController``` | 1:2 |
+| ```AddCityViewController``` |  |
 | ```YinsiViewController``` | 1:3 |
 | ```CityCountyTable``` | 1:4 |
 
