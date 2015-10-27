@@ -275,8 +275,8 @@ schedule_cityID,schedule_cityID,schedule_vehicle,schedule_yinsiType,schedule_yin
 | ```schedule_endDate``` | 日程结束时间 |
 | ```schedule_cityID``` | 日程目的地 |
 | ```schedule_purpose``` | 日程的出行目的 |
-| ```schedule_vehicle``` | 1:5 |
-| ```schedule_yinsiType``` | 1:6 |
+| ```schedule_vehicle``` | 日程的出行方式 |
+| ```schedule_yinsiType``` | 日程可见类型 |
 | ```schedule_yinsiFris``` | 1:7 |
 
 
