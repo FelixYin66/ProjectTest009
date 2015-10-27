@@ -270,7 +270,7 @@
 添加日程参数说明：
 schedule_cityID,schedule_cityID,schedule_vehicle,schedule_yinsiType,schedule_yinsiFris
 
-| ```schedule_date``` | 1:0 |
+| ```schedule_date``` | 日程开始时间 |
 | -- | -- |
 | ```schedule_endDate``` | 1:2 |
 | ```schedule_cityID``` | 1:3 |
