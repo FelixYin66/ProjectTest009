@@ -432,6 +432,72 @@
 
 
 
+```swift
 
+////  选中其中一个“日程记录”时，跳转到详情页
+///
+///  @param tableView 展示数据对象tableView
+///  @param indexPath 当个记录的索引
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    NSInteger tempSection = indexPath.section - userModel.user_scheduleArr.count;
+
+    SchDetailViewController *schDetailVc = [[SchDetailViewController alloc]init];
+    
+    //设置进入日程详情页的类型，代表是从我的日程进入
+    schDetailVc.schDetail_type = MySchedulesType;
+    
+    
+    //有”历史日程“与“新日程”是分开的，所以在获取数据时需要判断
+    
+    
+    //user_scheduleArr的数字为1
+    
+//    NSLog(@"🐶🐶🐶🐶🐶🐶🐶user_scheduleArr数组%ld",userModel.user_scheduleArr.count);
+    
+    if (indexPath.section < userModel.user_scheduleArr.count) {
+        
+        //第一组为“新日程"
+        
+        schDetailVc.scheduleModel = [[userModel.user_scheduleArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+        
+    } else {
+        
+        //第二组为"历史日程"
+        
+        schDetailVc.scheduleModel = [[userModel.user_scheduleHistoryArr objectAtIndex:tempSection] objectAtIndex:indexPath.row];
+        
+    }
+    
+    NSInteger messageCount = schDetailVc.scheduleModel.schedule_friCount;
+    
+    //当messageCount>0时需要刷新数据
+    
+    if (messageCount>0) {
+        
+        isLoadData = YES;
+        
+    }
+    
+    
+    //设置可以左右滑动
+    [self SlideReturnEnable];
+    
+    //当跳转到详情页时，隐藏tabBarBottomItem
+    self.hidesBottomBarWhenPushed = YES;
+    
+    //调转到详情页
+    [self.navigationController pushViewController:schDetailVc animated:YES];
+    
+    //跳转回来不会隐藏tabBarButtonItem
+    self.hidesBottomBarWhenPushed = NO;
+    [schDetailVc release];
+    
+}
+
+
+
+```
 
 
