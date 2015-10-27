@@ -12,7 +12,7 @@
 | -- | -- |
 | ```AddCityViewController``` | 此为在添加日程时，选择目的地一个视图控制器 |
 | ```YinsiViewController``` | 设置可选项“日程”是否可见 |
-| ```CityCountyTable``` | 此为展示所有城市记录视图 |
+| ```CityCountyTable``` | 此为展示所有城市记录视图，是AddCityViewController中的子视图 |
 
 
 
