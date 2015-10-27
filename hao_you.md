@@ -269,4 +269,20 @@
 ![搜索好友](搜索好友.png)
 
 
+```swift
 
+///  点击导航控制器左侧的UIBarButtonItem触发搜索功能
+
+-(void)leftNavMenuEvent {
+
+    searchBar.hidden = NO;
+    
+    //让searchBar变成第一响应者
+    [searchBar becomeFirstResponder];
+
+}
+
+
+
+
+```
