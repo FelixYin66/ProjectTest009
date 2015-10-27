@@ -270,6 +270,64 @@
 
 
 
-``````
+```swift
+
+///  点击完成按钮 ----日程创建完成
+
+-(void)finishEvent {
+    
+    
+    //验证日程信息是否完整
+
+    if (newScheduleModel.schedule_date == nil || newScheduleModel.schedule_city == nil) {
+        [SVProgressHUD showErrorWithStatus:@"请填写完整日程信息"];
+        return;
+    }
+
+    [SVProgressHUD showWithStatus:@"正在创建日程"];
+    
+    //可选项日程的出行方式
+    
+    if ([newScheduleModel.schedule_vehicle isEqualToString:@"无"]) {
+        newScheduleModel.schedule_vehicle = @"";
+    }
+    
+    
+    //发送添加日程网络请求
+    
+    [CCInterface requestAddSch:newScheduleModel.schedule_date dateEnd:newScheduleModel.schedule_endDate address:newScheduleModel.schedule_cityID purpose:(NSString *)newScheduleModel.schedule_purpose chuxingType:newScheduleModel.schedule_vehicle yinsiType:newScheduleModel.schedule_yinsiType friends:newScheduleModel.schedule_yinsiFris backBlock:^(int status, NSDictionary *dictResult) {
+        if (status == 200) {
+            NSLog(@"添加日程 result %@",dictResult);
+            if (dictResult == NULL) {
+                [SVProgressHUD showErrorWithStatus:@"创建日程失败，请稍后再试"];
+                return;
+            }
+            if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                [self rightNavMenuEvent];
+
+                NSLog(@"成功");
+                newScheduleModel.schedule_city = nil;
+                newScheduleModel.schedule_date = nil;
+                newScheduleModel.schedule_days = 0;
+                newScheduleModel.schedule_endDate = nil;
+
+                [[NSNotificationCenter defaultCenter] postNotificationName:AddScheduleNoti object:nil];
+
+                [myDele.tabController setSelectedViewController:[myDele.tabController.viewControllers objectAtIndex:0]];
+            } else {
+                [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+            }
+            
+        } else {
+            [SVProgressHUD dismiss];
+        }
+    }];
+}
+
+
+
+
+```
 
 
