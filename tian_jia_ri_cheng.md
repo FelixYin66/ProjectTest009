@@ -277,7 +277,7 @@ schedule_cityID,schedule_cityID,schedule_vehicle,schedule_yinsiType,schedule_yin
 | ```schedule_purpose``` | 日程的出行目的 |
 | ```schedule_vehicle``` | 日程的出行方式 |
 | ```schedule_yinsiType``` | 日程可见类型 |
-| ```schedule_yinsiFris``` | 1:7 |
+| ```schedule_yinsiFris``` | 日程关联到的好友 |
 
 
 
