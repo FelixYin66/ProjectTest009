@@ -8,7 +8,7 @@
 
 "添加日程"模块可以为当前账号添加新的日程安排，日程安排中可以包含必选项与非必选项，必选项包含**目的地**，**到达时间**，**结束时间**，可选项中包含**出行方式**,**日程可见性**,**出行目的**.
 
-| ```AddScheduleViewController``` | 此为**添加日程控制器** |
+| ```AddScheduleViewController``` | 此为添加日程控制器 |
 | -- | -- |
 | ```AddCityViewController``` | 1:2 |
 | ```YinsiViewController``` | 1:3 |
