@@ -426,7 +426,7 @@
 
 | scheduleModel | 此为SchDetailViewController的一个属性，保存被点击日程模型 |
 | -- | -- |
-| schDetail_type | 1:2 |
+| schDetail_type | 此为SchDetailViewController的一个属性，记录当前是从什么页面进入详情页的 |
 
 
 
