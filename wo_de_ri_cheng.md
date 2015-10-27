@@ -424,7 +424,7 @@
 
 ## 展示单个日程详情：
 
-| scheduleModel | 此为SchDetailViewController的一个属性，保存被点击日程 |
+| scheduleModel | 此为SchDetailViewController的一个属性，保存被点击日程模型 |
 | -- | -- |
 | 0:2 | 1:2 |
 
