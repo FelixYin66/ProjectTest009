@@ -268,7 +268,7 @@
 
 
 添加日程参数说明：
-schedule_cityID,schedule_cityID,schedule_vehicle,schedule_yinsiType,schedule_yinsiFris
+
 
 | ```schedule_date``` | 日程开始时间 |
 | -- | -- |
