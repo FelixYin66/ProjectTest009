@@ -119,4 +119,294 @@
 
 ```
 
-加载数据
+加载数据日程数据：
+
+
+```swift
+
+#pragma mark 把日程转为model  ❤️<字典转模型>❤️
+
+-(void)readLocationData:(NSDictionary *)myScheduleDict{
+    
+    //在之前将所有保存的数据清空
+    
+    [userModel.user_scheduleArr removeAllObjects];
+    [userModel.user_scheduleHistoryArr removeAllObjects];
+    
+    //获取新日程与历史日程数据
+    
+    [nowScheduleArr addObjectsFromArray:[myScheduleDict objectForKey:@"now"]];
+    
+    [historyScheduleArr addObjectsFromArray: [myScheduleDict objectForKey:@"history"]];
+    
+    //数据为空时
+    
+    if (nowScheduleArr.count <=0 && historyScheduleArr.count<=0) {
+        
+        if (!emptyImg) {
+            emptyImg = [[[UIImageView alloc]initWithFrame:CGRectMake(0, 110, UIWidth, 145)] autorelease];
+            emptyImg.image = [UIImage imageNamed:@"空状态－暂无日程"];
+            [myTable addSubview:emptyImg];
+            emptyImg.userInteractionEnabled = YES;
+            UITapGestureRecognizer * tap = [UITapGestureRecognizer new];
+            [tap addTarget:self action:@selector(handleTap)];
+            [emptyImg addGestureRecognizer:tap];
+            
+        } else {
+            
+            //当数据为空时，图片为显示状态
+            
+            emptyImg.hidden = NO;
+            
+        }
+        
+        //刷新数据，当删除日程后，没有一个记录时也需要更新数据
+        
+        [myTable reloadData];
+        
+        return;
+        
+    } else {
+        
+        //当有数据时隐藏图片
+        
+        emptyImg.hidden = YES;
+        
+    }
+    
+    //❤️我的日程列表❤️
+    
+    NSMutableArray *tempArr = [[[NSMutableArray alloc]init]autorelease];
+    
+    NSMutableArray *getTempSchArr = [[[NSMutableArray alloc]init] autorelease];
+    
+    for (int i=0; i<2; i++) {
+        
+        //移除所有的历史数据
+        
+        [tempArr removeAllObjects];
+        [getTempSchArr removeAllObjects];
+        
+        if (i==0) {
+            
+            //添加新的日程
+            [tempArr addObjectsFromArray:nowScheduleArr];
+        } else {
+            
+            //添加历史的日程
+            [tempArr addObjectsFromArray:historyScheduleArr];
+        }
+        
+        
+        if (tempArr.count <= 0) {
+            continue;
+        }
+        
+        
+        //循环遍历字典，将字典转换成模型
+        
+        for (int k=0; k<tempArr.count; k++) {
+            
+            //获取tempArr数组中第k个字典
+            
+            NSDictionary *tempDict = [tempArr objectAtIndex:k];
+            
+            //进行非空判断，防止字典中保存了nil对象，出现Crash现象
+            
+            if ([tempDict isKindOfClass:[NSNull class]]) {
+                continue;
+            }
+            
+            //获取日程开始时间，并将其转换成NSDate
+            
+            NSDate *schDate = [timeToString stringToDate:[tempDict objectForKey:@"date_start"]];
+            
+            //获取日程结束时间，并将其转换成NSDate
+            
+            NSDate *schEndDate = [timeToString stringToDate:[tempDict objectForKey:@"date_end"]];
+            
+            
+            //创建日程模型对象
+            
+            ScheduleModel *scheduleModel = [[[ScheduleModel alloc]init] autorelease];
+            
+            //date_start 为日程开始时间
+            scheduleModel.schedule_date = [tempDict objectForKey:@"date_start"];
+            
+            //vehicle  为日程交通方式
+            scheduleModel.schedule_vehicle = [tempDict objectForKey:@"vehicle"];
+            
+            //purpose  为日程的目的<旅行，商务...>
+            scheduleModel.schedule_purpose = [tempDict objectForKey:@"purpose"];
+            
+            //截取字符串时间的 年，月，日部分   timeToString为一个工具类
+            
+            scheduleModel.schedule_date_year = [timeToString returnYear:schDate];
+            scheduleModel.schedule_date_month = [timeToString returnMonth:schDate];
+            scheduleModel.schedule_date_day = [timeToString returnDay:schDate];
+            
+            //address  为日程的目的地
+            scheduleModel.schedule_city = [tempDict objectForKey:@"address"];
+            
+            //date_length 为日程安排的时间长度
+            scheduleModel.schedule_days = [[tempDict objectForKey:@"date_length"] intValue];
+            
+            //date_end 为日程的结束时间
+            scheduleModel.schedule_endDate = [tempDict objectForKey:@"date_end"];
+            
+            //截取字符串时间的 年，月，日部分
+            
+            scheduleModel.schedule_endDate_year = [timeToString returnYear:schEndDate];
+            scheduleModel.schedule_endDate_month = [timeToString returnMonth:schEndDate];
+            scheduleModel.schedule_endDate_day = [timeToString returnDay:schEndDate];
+            
+            //schedule_id为日程的ID号
+            
+            scheduleModel.schedule_ID = [tempDict objectForKey:@"schedule_id"];
+            
+            //relationships  为当前日程碰到的朋友数
+            
+            scheduleModel.schedule_friCount = [[tempDict objectForKey:@"relationships"] intValue];
+            
+            //创建好友对象数组，显示详情中需要使用到
+            
+            scheduleModel.schedule_friendsArr = [[[NSMutableArray alloc]init] autorelease];
+            
+            //policy 为日程的 隐藏策略
+            scheduleModel.schedule_yinsiType = [tempDict objectForKey:@"policy"];
+            
+            //fids 为日程的可见好友的详情数组
+            
+            scheduleModel.schedule_yinsiFriArr = [tempDict objectForKey:@"fids"];
+            
+            
+            if (i==1) {
+                
+                //标记模型为历史日程
+                
+                scheduleModel.schedule_isPass = YES;
+                
+            }
+            
+            
+            NSArray *pengFriArr = [[[NSArray alloc]init]autorelease];
+            
+            //日程中碰到的朋友
+            
+            pengFriArr = [tempDict objectForKey:@"relations"];
+            
+            //日程中碰到的朋友数量
+            
+            scheduleModel.schedule_friCount = pengFriArr.count;
+            
+            
+            for (int j=0; j<[pengFriArr count]; j++) {
+                
+                NSDictionary *friDict = [pengFriArr objectAtIndex:j];
+                
+                
+                //非空判断，防止字典中保存nil对象时出现crash现象
+                
+                if ([friDict isKindOfClass:[NSNull class]]) {
+                    continue;
+                }
+                
+                //创建当个好友对象。。。此好友数组为此日程关联的
+                
+                UserModel *friModel = [[[UserModel alloc]init] autorelease];
+                
+                //用户的id
+                friModel.user_id = [friDict objectForKey:@"uid"];
+                
+                
+                //remark 为好友备注备注    当”备注“为空时，用户名为name值或者为utel值
+                
+                if ([[friDict objectForKey:@"remark"] isEqualToString:@""]||[friDict objectForKey:@"remark"]==nil) {
+                    
+                    //name 为好友名
+                    if ([[friDict objectForKey:@"name"] isEqualToString:@""]||[friDict objectForKey:@"name"]==nil) {
+                        
+                        //utel 为好友的手机号
+                        friModel.user_name = [friDict objectForKey:@"utel"];
+                    } else {
+                        friModel.user_name = [friDict objectForKey:@"name"];
+                    }
+                    
+                } else {
+                    
+                    //当remark 不为空时，用户名为备注
+                    
+                    friModel.user_name = [friDict objectForKey:@"remark"];
+                }
+                
+                //给用户模型设置参数值
+                
+                
+                //remark 为备注
+                
+                friModel.user_remark = [friDict objectForKey:@"remark"];
+                
+                //name 为用户名  设置用户的别名
+                
+                friModel.user_nickName = [friDict objectForKey:@"name"];
+                
+                //设置用户的手机号
+                
+                friModel.user_phoneNum = [friDict objectForKey:@"utel"];
+                
+                //avatar_url 为用户的头像的地址
+                
+                friModel.user_headImgUrl = [friDict objectForKey:@"avatar_url"];
+                
+                //将好友对象添加到日程模型中
+                
+                [scheduleModel.schedule_friendsArr addObject:friModel];
+            }
+            
+            [getTempSchArr addObject:scheduleModel];
+            
+        }
+        
+        //将日程数组进行”分组“
+        
+        [self schMonthArr:getTempSchArr type:(int)i];
+        
+    }
+    
+    
+    //当次日程的“新日程”数与“历史日程”数小于1时，隐藏footerView
+    
+    if (nowScheduleArr.count+historyScheduleArr.count < 1) {
+        footView.hidden = YES;
+    } else {
+        
+        //此处证明有至少"一页"的数据
+        
+        footView.hidden = NO;
+        
+        if (pageCount==1) {
+            
+            //当pageCount为1时，无需刷新数据，footerView提示为“以上为全部日程”
+            
+            [footView changeLoadingStatus:NO isMore:NO];
+        } else {
+            
+            //当pageCount大于1时，footerView提示“上拉加载数据”
+            
+            [footView changeLoadingStatus:NO isMore:YES];
+        }
+        
+    }
+    
+    //   😄😄😄😄😄 开始加载tableView的数据  😄😄😄😄😄😄😄😄
+    
+    [myTable reloadData];
+    
+}
+
+
+
+
+
+
+```
