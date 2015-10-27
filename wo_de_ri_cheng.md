@@ -505,9 +505,7 @@
 
 
 
-//headerView展示日程详情记录
-
-
+//tableView  --->headerView展示日程详情记录
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
 
