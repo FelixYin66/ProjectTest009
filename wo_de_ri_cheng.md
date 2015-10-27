@@ -506,3 +506,138 @@
 ```
 
 
+
+
+##   删除当前日程
+
+
+```swift
+
+//actionSheet代理方法
+
+-(void)ccActionSheet:(CCActiotSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+
+//    actionSheet.tag = 199为点击导航栏右侧按钮的actionSheet
+    
+    if (actionSheet.tag == 199) {
+        
+        
+        //buttonIndex = 1 代表为 微信分享
+        if (buttonIndex == 1) {
+            [self shareWx:WXSceneSession];
+            
+        //buttonIndex = 2 代表为 朋友圈分享
+        } else if (buttonIndex == 2) {
+            [self shareWx:WXSceneTimeline];
+            
+            //buttonIndex = 3 代表为 微博分享
+        } else if (buttonIndex == 3) {
+            
+            [ShareClass mainRoot].share_type = SINA;
+
+            [SVProgressHUD showWithStatus:@"正在分享"];
+
+            [[NSUserDefaults standardUserDefaults]setObject:(NSString *)_scheduleModel.schedule_ID forKey:@"shareType"];
+            [[NSUserDefaults standardUserDefaults]setObject:@"noshare" forKey:@"isShare"];
+            [[NSUserDefaults standardUserDefaults]synchronize];
+
+            //判断是否授权过期了。过期了，就去授权。
+            if ([[NSUserDefaults standardUserDefaults]objectForKey:@"user_sinaToken"] == nil) {
+
+                [self sinaSSO];
+
+                return;
+            } else {
+                NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+                double authTime = [[[NSUserDefaults standardUserDefaults]objectForKey:@"authTime"] doubleValue]; //上次授权时间
+                double tempTime = [[[NSUserDefaults standardUserDefaults] objectForKey:@"expires_in"] doubleValue]; //授权有效时间段
+
+                NSLog(@"nowtime %f passtime %f passtime %f",nowTime,authTime,tempTime);
+                if (authTime+tempTime<=nowTime) {
+                    [self sinaSSO];
+
+                    return;
+                } else {
+                    [self shareSina];
+                }
+            }
+            
+
+           //buttonIndex = 1 代表为 删除操作
+            
+        } else if (buttonIndex == 4) {
+            
+            
+//            点击删除操作时
+            
+
+            [super rightNavMenuEvent];
+            
+            
+//            发送删除日程请求
+
+            [CCInterface requestDeleSch:_scheduleModel.schedule_ID backBlock:^(int status, NSDictionary *dictResult) {
+                
+                NSLog(@"方法名: %s  dict Result %@",__func__,dictResult);
+                
+                
+                if (status == 200) {
+                    
+                    if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                        //删除成功后发送通知给列表页面
+                        [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:DeleScheduleNoti object:nil];
+                        double delayInSeconds = 0.5;
+                        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                            [self.navigationController popViewControllerAnimated:YES];
+                        });
+                        
+                    } else {
+                        [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+                    }
+                    
+                }
+            }];
+        }
+        
+        
+        
+        
+    } else {
+        
+        
+        //这个为点击了，”日程记录“中的电话号码
+        
+        
+        //第一个为电话联系
+        if (buttonIndex == 1) {
+            NSURL *phoneNumberURL = [NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", callFriTel]];
+            NSLog(@"make call, URL=%@", phoneNumberURL);
+
+            [[UIApplication sharedApplication] openURL:phoneNumberURL];
+            
+            //第二个为短信联系
+        } else if (buttonIndex == 2) {
+
+            NSURL *phoneNumberURL = [NSURL URLWithString:[NSString stringWithFormat:@"sms:%@", callFriTel]];
+            NSLog(@"send sms, URL=%@", phoneNumberURL);
+            [[UIApplication sharedApplication] openURL:phoneNumberURL];
+        }
+        
+    }
+    
+    
+    
+
+}
+
+
+
+
+```
+
+
+
+
