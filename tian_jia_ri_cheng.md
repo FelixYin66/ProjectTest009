@@ -272,7 +272,7 @@ schedule_cityID,schedule_cityID,schedule_vehicle,schedule_yinsiType,schedule_yin
 
 | ```schedule_date``` | 日程开始时间 |
 | -- | -- |
-| ```schedule_endDate``` | 1:2 |
+| ```schedule_endDate``` | 日程结束时间 |
 | ```schedule_cityID``` | 1:3 |
 | ```schedule_cityID``` | 1:4 |
 | ```schedule_vehicle``` | 1:5 |
