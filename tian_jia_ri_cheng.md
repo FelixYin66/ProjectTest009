@@ -12,7 +12,7 @@
 | -- | -- |
 | ```AddCityViewController``` | 1:2 |
 | ```YinsiViewController``` | 1:3 |
-| 0:4 | 1:4 |
+| ```CityCountyTable``` | 1:4 |
 
 
 
