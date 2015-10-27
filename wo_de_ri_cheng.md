@@ -424,7 +424,7 @@
 
 ## 展示单个日程详情：
 
-| ```scheduleModel``` | 此为SchDetailViewController的一个属性，保存被点击日程模型 |
+| ```scheduleModel``` | 此为**SchDetailViewController**的一个属性，保存被点击日程模型 |
 | -- | -- |
 | ```schDetail_type``` | **此为SchDetailViewController**的一个属性，记录当前是从什么页面进入详情页的 |
 
