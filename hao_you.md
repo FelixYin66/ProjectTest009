@@ -140,6 +140,53 @@
 
 ```swift
 
+//点击添加好友，添加好友方式有"手机号添加","通讯录加班","微博添加"
+
+-(void)addFriEvent:(UIButton *)temp {
+    [self handleSingleTap];
+    
+    //通讯录添加
+    if (temp.tag == 101) {
+        TongxunluViewController *tongxunluVc = [[[TongxunluViewController alloc]init] autorelease];
+        [self SlideReturnEnable];
+        self.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:tongxunluVc animated:YES];
+        self.hidesBottomBarWhenPushed = NO;
+
+    
+    //新浪添加
+    } else if (temp.tag == 102) {
+
+        SinaViewController *sinaVc = [[[SinaViewController alloc]init]autorelease];
+        [self SlideReturnEnable];
+        self.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:sinaVc animated:YES];
+        self.hidesBottomBarWhenPushed = NO;
+    //手机或邮箱添加
+    } else if (temp.tag == 100){
+        
+        UIAlertView *myAlertView = [[UIAlertView alloc]initWithTitle:@"手机号或邮箱添加好友" message:@"" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        myAlertView.tag = 501;
+        [myAlertView layoutSubviews];
+        myAlertView.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
+        myAlertView.delegate = self;
+        
+        [myAlertView textFieldAtIndex:0].placeholder = @"请输入好友手机号或邮箱地址";
+        [myAlertView textFieldAtIndex:1].placeholder = @"给TA捎句话表明一下身份吧";
+        [myAlertView textFieldAtIndex:1].secureTextEntry = NO;
+        
+        if (ISIOS7) {
+            
+            [[myAlertView textFieldAtIndex:0] setTintColor:Color_icon_green];
+            [[myAlertView textFieldAtIndex:1] setTintColor:Color_icon_green];
+            
+        }
+        
+        [myAlertView show];
+        [myAlertView release];
+
+    }
+}
 
 
 ```
