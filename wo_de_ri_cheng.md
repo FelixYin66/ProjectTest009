@@ -509,6 +509,165 @@
 
 
 
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+
+    UIView *headView = [[[UIView alloc]init] autorelease];
+    headView.backgroundColor = [UIColor clearColor];
+
+    UIImageView *backImgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 20, UIWidth, 140)];
+    backImgView.image = [UIImage imageNamed:@"日程详情底图"];
+    [headView addSubview:backImgView];
+    
+    
+    //所在城市的图标
+
+    
+    CGFloat cityNameWidth = [StringSizeUtil getContentSizeWidth:_scheduleModel.schedule_city font:[UIFont fontWithName:@"HelveticaNeue-Light" size:15] height:15.0];
+    UIImageView *purposeIcon = [[UIImageView alloc]initWithFrame:CGRectMake(cityNameWidth+70,30, 18, 18)];
+    purposeIcon.image = [UIImage imageNamed:@""];
+    [headView addSubview:purposeIcon];
+    
+    
+    //设置是否为空开图标
+    
+
+    UIImageView *yinsiIcon = [[UIImageView alloc]init];
+    yinsiIcon.image = [UIImage imageNamed:@"yinsiIcon"];
+    [headView addSubview:yinsiIcon];
+
+    
+    //添加可设置日程的”可见性“
+
+    UIButton *yinsiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [yinsiBtn setImage:[UIImage imageNamed:@"右箭头"] forState:UIControlStateNormal];
+    [yinsiBtn setImageEdgeInsets:UIEdgeInsetsMake(10, 285, 10, 15)];
+    [yinsiBtn addTarget:self action:@selector(yinsiFri) forControlEvents:UIControlEventTouchUpInside];
+    [headView addSubview:yinsiBtn];
+
+
+    
+    //设置出行方式
+    
+    if (![_scheduleModel.schedule_vehicle isEqualToString:@""]) {
+        
+        UIImageView *jiaotongIcon = [[UIImageView alloc]initWithFrame:CGRectMake(15, 175, 18, 18)];
+        jiaotongIcon.image = [UIImage imageNamed:@"出行方式"];
+        [headView addSubview:jiaotongIcon];
+
+
+        yinsiBtn.frame = CGRectMake(0, 215, UIWidth, 40);
+        
+     //添加出行方式图标
+        
+        UIImageView *vehicleIcon = [[UIImageView alloc]initWithFrame:CGRectMake(52, 176, 18, 18)];
+        vehicleIcon.image = [UIImage imageNamed:_scheduleModel.schedule_vehicle];
+        [headView addSubview:vehicleIcon];
+        yinsiIcon.frame = CGRectMake(13, 225, 20, 20);
+        
+    } else {
+        
+        yinsiIcon.frame = CGRectMake(13, 175, 20, 20);
+        yinsiBtn.frame = CGRectMake(0, 165, UIWidth, 40);
+        
+    }
+
+
+    //循环添加5个UILabel显示”日程“的属性值
+
+    for (int i=0; i<4; i++) {
+        
+        //设置日程详情单个属性值
+        
+        UILabel *myLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 9+50*i, 202, 20)];
+        myLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:15];
+        myLabel.textColor = ProColorWhite;
+        [backImgView addSubview:myLabel];
+        
+        if (i==0) {
+            
+            //城市
+            
+            myLabel.text = _scheduleModel.schedule_city;
+            
+            //日程安排中“事”的类型
+            
+            if ([_scheduleModel.schedule_purpose isEqualToString:@"1"]) {
+                
+                purposeIcon.image = [UIImage imageNamed:@"商务"];//_scheduleModel.schedule_purpose
+
+            } else if ([_scheduleModel.schedule_purpose isEqualToString:@"2"]) {
+                purposeIcon.image = [UIImage imageNamed:@"游玩"];
+            } else {
+                purposeIcon.image = [UIImage imageNamed:@""];
+
+            }
+            
+            
+            //日程安排的时间
+        } else if (i==1) {
+            
+            myLabel.text = [NSString stringWithFormat:@"%@.%@.%@ — %@.%@.%@",_scheduleModel.schedule_date_year,_scheduleModel.schedule_date_month,_scheduleModel.schedule_date_day,_scheduleModel.schedule_endDate_year,_scheduleModel.schedule_endDate_month,_scheduleModel.schedule_endDate_day];
+            
+            //日程所花时间
+        } else if (i==2) {
+
+            
+            myLabel.text = [NSString stringWithFormat:@"%ld天",_scheduleModel.schedule_days];
+        } else {
+            
+            //日程的出行方式
+            
+            if (![_scheduleModel.schedule_vehicle isEqualToString:@""]) {
+                myLabel.frame = CGRectMake(50, 6+50*4, 202, 20);
+            } else {
+                myLabel.frame = CGRectMake(50, 6+50*i, 202, 20);
+            }
+            
+            //日程的公开性
+            
+            if ([_scheduleModel.schedule_yinsiType intValue]==0) {
+                myLabel.text = @"公开";
+                yinsiBtn.hidden = YES;
+            } else if ([_scheduleModel.schedule_yinsiType intValue]==1) {
+                myLabel.text = @"仅自己可见";
+                yinsiBtn.hidden = YES;
+            } else if ([_scheduleModel.schedule_yinsiType intValue]==2) {
+                yinsiBtn.hidden = NO;
+                myLabel.text = @"指定好友可见";
+            }
+            
+        }
+    }
+    
+
+    //headerView中添加UIImageView分割好友记录与详情记录
+    
+    if (_scheduleModel.schedule_friendsArr.count != 0) {
+
+        UIImageView *titleImg = [[[UIImageView alloc]initWithFrame:CGRectMake(0, 230, UIWidth, 30)] autorelease];
+
+        [headView addSubview:titleImg];
+
+        UILabel *titleLab = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, UIWidth, 30)];
+        titleLab.backgroundColor = [UIColor clearColor];
+        titleLab.textColor = ProColorWhite;
+        titleLab.textAlignment = NSTextAlignmentCenter;
+        titleLab.font = [UIFont systemFontOfSize:12];
+        titleLab.text = @"旅程中您有机会碰见";
+        [titleImg addSubview:titleLab];
+        [titleLab release];
+
+        if (![_scheduleModel.schedule_vehicle isEqualToString:@""]) {
+            titleImg.frame = CGRectMake(0, 280, UIWidth, 30);
+        }
+        
+    }
+
+    return headView;
+}
+
+
+
 ```
 
 
