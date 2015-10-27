@@ -268,16 +268,16 @@
 
 
 添加日程参数说明：
+schedule_cityID,schedule_cityID,schedule_vehicle,schedule_yinsiType,schedule_yinsiFris
 
-
-| `````` | 1:0 |
+| ```schedule_date``` | 1:0 |
 | -- | -- |
-| `````` | 1:2 |
-| `````` | 1:3 |
-| `````` | 1:4 |
-| `````` | 1:5 |
-| `````` | 1:6 |
-| `````` | 1:7 |
+| ```schedule_endDate``` | 1:2 |
+| ```schedule_cityID``` | 1:3 |
+| ```schedule_cityID``` | 1:4 |
+| ```schedule_vehicle``` | 1:5 |
+| ```schedule_yinsiType``` | 1:6 |
+| ```schedule_yinsiFris``` | 1:7 |
 
 
 
