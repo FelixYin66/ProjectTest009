@@ -11,7 +11,7 @@
 | ```AddScheduleViewController``` | 此为“添加日程”控制器 |
 | -- | -- |
 | ```AddCityViewController``` | 此为在添加日程时，选择目的地一个视图控制器 |
-| ```YinsiViewController``` |  |
+| ```YinsiViewController``` | 设置 |
 | ```CityCountyTable``` | 1:4 |
 
 
