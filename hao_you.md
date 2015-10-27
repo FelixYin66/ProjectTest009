@@ -139,6 +139,67 @@
 ![添加好友1](添加好友1.png)
 
 ```swift
+///  点击添加好友中的其中一个方式
+///
+///  @param alertView   alerView对象
+///  @param buttonIndex 你点击的button的索引
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+
+    if (alertView.tag == 500) {
+        
+        //如果是通讯录添加，push到通讯录控制器
+        
+        if (buttonIndex == 1) {
+            TongxunluViewController *tongxunluVc = [[[TongxunluViewController alloc]init] autorelease];
+            [self SlideReturnEnable];
+            self.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:tongxunluVc animated:YES];
+            self.hidesBottomBarWhenPushed = NO;
+        }
+        
+    } else if (alertView.tag == 501) {
+        
+        if (buttonIndex == 1) {
+            NSString *str = [alertView textFieldAtIndex:0].text;
+            NSString *mesStr = [alertView textFieldAtIndex:1].text;
+            
+            //邮箱格式验证
+            
+            if (str.length != 11 && ![EmailValidate isValidateEmail:str]) {
+                [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号或邮箱地址"];
+                return;
+            }
+            
+            
+            //邮箱格式正确后发送好友请求
+            
+            [CCInterface requestAddTel:str message:mesStr backBlock:^(int status, NSDictionary *dictResult) {
+                NSLog(@"stri is %@",dictResult);
+                
+                if (status == 200) {
+                    if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                        
+                        //后台给的信息反馈，可能不存在此好友，或者添加好友成功
+                        
+                        [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                    } else {
+                        
+                        //错误提示
+                        
+                        [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+                    }
+                }
+            }];
+            
+            
+            
+            
+        }
+
+    }
+
+}
 
 
 
