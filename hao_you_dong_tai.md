@@ -142,6 +142,121 @@
 
 
 
+///  把数据转为model
+///
+///  @param getScheduleArr 服务器或者本地数据数组
+
+-(void)readLocationData:(NSArray *)getScheduleArr{
+    if (getScheduleArr.count <=0 ) {
+        
+        if (!emptyImg) {
+            emptyImg = [[[UIImageView alloc]initWithFrame:CGRectMake(0, 110, UIWidth, 125)] autorelease];
+            
+            //当没有数据时，向UITableView添加一个提示图片
+            [myTable addSubview:emptyImg];
+
+        } else {
+            emptyImg.hidden = NO;
+        }
+        
+        if (indexSeg == 0) {
+            emptyImg.image = [UIImage imageNamed:@"空状态－暂无到访动态"];
+        } else {
+            //日程动态
+            emptyImg.image = [UIImage imageNamed:@"空状态－暂无好友动态"];
+        }
+        
+        //UITableView加载数据
+        
+        [myTable reloadData];
+
+        return;
+    } else {
+        
+        emptyImg.hidden = YES;
+    }
+    
+    //清空之前所有的数据
+
+    [scheduleComeArr removeAllObjects];
+
+    if (indexSeg == 0) {
+        
+        //到访动态
+
+        for (int i=0; i<getScheduleArr.count; i++) {
+            
+            NSDictionary *tempDict = [getScheduleArr objectAtIndex:i];
+            ScheduleModel *scheduleModel = [[[ScheduleModel alloc]init] autorelease];
+            scheduleModel.user_id = [tempDict objectForKey:@"friend_id"];
+            if ([[tempDict objectForKey:@"remark"] isEqualToString:@""]||[tempDict objectForKey:@"remark"] == nil) {
+                if ([[tempDict objectForKey:@"name"] isEqualToString:@""]||[tempDict objectForKey:@"name"]==nil) {
+                    scheduleModel.user_name = [tempDict objectForKey:@"tel"];
+                } else {
+                    scheduleModel.user_name = [tempDict objectForKey:@"name"];
+                }
+            } else {
+                scheduleModel.user_name = [tempDict objectForKey:@"remark"];
+            }
+            scheduleModel.user_phoneNum = [tempDict objectForKey:@"tel"];
+            scheduleModel.user_headImgUrl = [tempDict objectForKey:@"avatar_url"];
+            scheduleModel.schedule_ID = [tempDict objectForKey:@"schedule_id"];
+            scheduleModel.schedule_city = [tempDict objectForKey:@"address"];
+            scheduleModel.schedule_days = [[tempDict objectForKey:@"date_length"] intValue];
+            [scheduleComeArr addObject:scheduleModel];
+        }
+
+    } else {
+        
+        //好友动态
+
+        NSMutableArray *tempScheduleArr = [[[NSMutableArray alloc]init] autorelease];
+
+        for (int j=0; j<getScheduleArr.count; j++) {
+
+            NSDictionary *tempDict = [getScheduleArr objectAtIndex:j];
+            
+            //好友动态里多了一个“日程开始时间”，后面是用这个进行排序
+            
+            NSDate *schDate = [timeToString stringToDate:[tempDict objectForKey:@"date_start"]];
+
+            ScheduleModel *scheduleModel = [[[ScheduleModel alloc]init] autorelease];
+            scheduleModel.user_id = [tempDict objectForKey:@"uid"];
+            
+            if ([[tempDict objectForKey:@"remark"] isEqualToString:@""]||[tempDict objectForKey:@"remark"] == nil) {
+                
+                if ([[tempDict objectForKey:@"name"] isEqualToString:@""]||[tempDict objectForKey:@"name"]==nil) {
+                    scheduleModel.user_name = [tempDict objectForKey:@"tel"];
+                } else {
+                    scheduleModel.user_name = [tempDict objectForKey:@"name"];
+                }
+                
+            } else {
+                scheduleModel.user_name = [tempDict objectForKey:@"remark"];
+            }
+            
+            scheduleModel.user_phoneNum = [tempDict objectForKey:@"tel"];
+            scheduleModel.user_headImgUrl = [tempDict objectForKey:@"avatar_url"];
+            scheduleModel.schedule_ID = [tempDict objectForKey:@"schedule_id"];
+            scheduleModel.schedule_city = [tempDict objectForKey:@"address"];
+            scheduleModel.schedule_days = [[tempDict objectForKey:@"date_length"] intValue];
+            scheduleModel.schedule_date_year = [timeToString returnYear:schDate];
+            scheduleModel.schedule_date_month = [timeToString returnMonth:schDate];
+            scheduleModel.schedule_date_day = [timeToString returnDay:schDate];
+
+            [tempScheduleArr addObject:scheduleModel];
+        }
+        
+        //”好友动态“按照时间排序....
+        [self schDayArr:tempScheduleArr];
+
+    }
+    
+    //刷新UITableView
+    
+    [myTable reloadData];
+
+}
 
 
 
