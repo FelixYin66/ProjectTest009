@@ -118,6 +118,100 @@
 ```swift
 
 
+//控制器准备工作，创建个个组件
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    self.title = @"生物动力法日历";
+    self.navigationItem.leftBarButtonItem = [self createLeftNavMainBtn:@"icon-定位" andTitle:nil];
+    self.navigationItem.rightBarButtonItem = [self createRightNavMainBtn:@"icon-more" andTitle:nil];
+    
+    
+    UIImageView *bgImgView = [[UIImageView alloc]initWithFrame:self.view.bounds];
+    bgImgView.image = [UIImage imageNamed:@"详情-背景图-果"];
+    [self.view addSubview:bgImgView];
+    
+    dele = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+
+    sectionHeadsKeys = [NSArray arrayWithObjects:@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10", @"11", @"12", nil];
+    
+    //添加UITableView之前，加载所有的日期数据，并保存下来
+    
+    [self getDataSource];
+    
+    //初始化内容视图，并将其当做内容视图
+    
+    myTable = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, UIWidth, UIHeight-60) style:UITableViewStylePlain];
+    myTable.sectionIndexColor = ProColorWhite;
+    myTable.sectionIndexBackgroundColor = [UIColor clearColor];
+    myTable.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
+    myTable.backgroundColor = [UIColor clearColor];
+    myTable.delegate = self;
+    myTable.dataSource = self;
+    myTable.showsVerticalScrollIndicator = NO;
+    myTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.view addSubview:myTable];
+ 
+
+    // 点击分享时，添加一个遮罩视图
+    
+    zhezhaoView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, UIWidth, UIHeight)];
+    zhezhaoView.backgroundColor = [UIColor clearColor];
+    zhezhaoView.userInteractionEnabled = NO;
+    [self.view addSubview:zhezhaoView];
+    UITapGestureRecognizer* singleRecognizer;
+    singleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap)];
+    singleRecognizer.numberOfTapsRequired = 1; // 单击
+    [zhezhaoView addGestureRecognizer:singleRecognizer];
+    
+
+    // 点击导航栏右侧按钮，出现的视图
+    
+    popupImgView = [[UIImageView alloc]initWithFrame:CGRectMake(UIWidth-20*AutoSizeScale, 0, 0, 0)];
+    popupImgView.userInteractionEnabled = YES;
+    popupImgView.image = [UIImage imageNamed:@"好友_弹出底图"];
+    popupImgView.alpha = 0.0;
+    popupImgView.layer.masksToBounds = YES;
+    [self.view addSubview:popupImgView];
+    
+    
+    //popupImgView 添加三个选项
+    
+    for (int i=0; i<3; i++) {
+        UIButton *myBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        myBtn.frame = CGRectMake(2*AutoSizeScale, 13*AutoSizeScale+45*i*AutoSizeScale, 125*AutoSizeScale, 44*AutoSizeScale);
+        if (i==0) {
+            [myBtn setTitle:@"生物动力法简介" forState:UIControlStateNormal];
+        } else if (i==1){
+            [myBtn setTitle:@"根果花叶介绍" forState:UIControlStateNormal];
+        } else if (i==2) {
+            [myBtn setTitle:@"分享给好友" forState:UIControlStateNormal];
+        }
+        myBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+        [myBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [myBtn addTarget:self action:@selector(buttonEvent:) forControlEvents:UIControlEventTouchUpInside];
+        myBtn.tag = 100+i;
+        [popupImgView addSubview:myBtn];
+    }
+    
+    
+    //向内容视图中添加一个todayBtn按钮
+    
+    UIButton *todayBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    todayBtn.frame = CGRectMake(UIWidth-50*AutoSizeScale, 0*AutoSizeScale, 50*AutoSizeScale, 50*AutoSizeScale);
+    
+    [todayBtn setImage:[UIImage imageNamed:@"日历-今"] forState:UIControlStateNormal];
+    [todayBtn addTarget:self action:@selector(setContentPoint) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:todayBtn];
+    
+    [self.view bringSubviewToFront:popupImgView];
+    
+    keyArr = [NSArray arrayWithObjects:@"01", @"02", @"03", @"04", @"05", @"06", @"07", @"08", @"09", @"10", @"11", @"12", nil];
+
+    [self setContentPoint];
+}
+
 
 ```
 
