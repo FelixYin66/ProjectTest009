@@ -29,6 +29,31 @@
 
 ```swift
 
+//将读取出来的数据转换成model实体
+
+-(void)dataToModel:(NSArray *)dataArr {
+    
+    
+    //循环遍历转换model
+    
+    // country 表示所在国家   city 表示所在国家城市名  timeZone表示时差
+    
+    for (int i=0; i<dataArr.count; i++) {
+        CityModel *_cityModel = [[CityModel alloc]init];
+        _cityModel.CC_Name = [NSString stringWithFormat:@"%@%@",[dataArr[i] objectForKey:@"country"],[dataArr[i] objectForKey:@"city"]];
+        _cityModel.country_Name = [dataArr[i] objectForKey:@"country"];
+        _cityModel.city_Name = [dataArr[i] objectForKey:@"city"];
+        _cityModel.location_Name = [dataArr[i] objectForKey:@"timeZone"];
+        [cityModelArr addObject:_cityModel];
+    }
+    
+    
+    //将解析后的数组进行排序
+    
+    cityModelArr = [SortObject sortArrayWithPinYin:cityModelArr];
+    [sortedArrForArrays addObjectsFromArray:[self getChineseStringArr:cityModelArr]];
+}
+
 
 
 
