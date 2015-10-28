@@ -57,6 +57,53 @@
 
 
 
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    static NSString *cellIdentifier = @"cell";
+    CountryTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    
+    //当没有cell时，创建一个cell
+    
+    if (cell == nil) {
+        cell = [[CountryTableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+    }
+    
+    
+    //但是第一组时，展示此时用户所在的国家
+    
+    if (indexPath.section == 0) {
+        cell.engNameLab.textColor = ProColorWhite;
+        cell.locationLab.textColor = ProColorWhite;
+        cell.backImg.image = [UIImage imageNamed:@"国家选择-定位"];
+        cell.cityModel = locationCity;
+    } else {
+        
+        
+        //其他组的情况
+        
+        cell.engNameLab.textColor = ProColorGray;
+        cell.locationLab.textColor = ProColorGray;
+        
+        //设置当前索引下的cityModel
+        
+        CityModel *tempModel = [[sortedArrForArrays objectAtIndex:indexPath.section-1] objectAtIndex:indexPath.row];
+    
+
+        cell.cityModel = tempModel;
+        
+        //按照奇偶，设置不同的背景图片
+        
+        if (indexPath.row%2==0) {
+            cell.backImg.image = [UIImage imageNamed:@"国家选择-蓝"];
+        } else {
+            cell.backImg.image = [UIImage imageNamed:@"国家选择-粉"];
+        }
+        
+    }
+    
+    return cell;
+}
 
 
 
