@@ -325,6 +325,50 @@
 
 ![意见反馈](意见反馈.png)
 
+```swift
+
+///  点击发送“意见反馈”按钮
+
+-(void)sendEvent {
+    
+    NSString *opinionStr = ((UITextView *)[self.view viewWithTag:1001]).text;
+    opinionStr = [opinionStr stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    
+    //输入框字符数验证
+
+    if (opinionStr.length>300) {
+        
+        UIAlertView *myAlert = [[UIAlertView alloc]initWithTitle:@"字数超限" message:[NSString stringWithFormat:@"请控制在300字以内，当前为%ld个字符", (unsigned long)opinionStr.length] delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        [myAlert show];
+        [myAlert release];
+        return;
+    } else if (opinionStr.length==0) {
+        [SVProgressHUD showErrorWithStatus:@"请输入反馈内容"];
+        return;
+    }
+    
+    //当反馈内容小于300字符时，发送网络请求
+    
+    [CCInterface requestFeekback:((UITextView *)[self.view viewWithTag:1001]).text contact:((UITextView *)[self.view viewWithTag:1000]).text backBlock:^(int status, NSDictionary *dictResult) {
+        NSLog(@"反馈 %@",dictResult);
+
+        if (status == 200) {
+            if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                [self.navigationController popViewControllerAnimated:YES];
+            } else {
+                [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+            }
+        }
+    }];
+
+}
+
+
+
+```
+
 
 退出登录:
 
