@@ -187,6 +187,44 @@
 
 
 ```swift
+//当拍照或者选中相册中图片结束后调用此方法
+
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+
+    //获取从手机得到的图片，并设置其半径大小为59的UIImage
+    
+    UIImage *uploadImg = [UIImage createRoundedRectImage:[info objectForKey:UIImagePickerControllerEditedImage] size:CGSizeMake(59*2, 59*2) radius:59];
+    
+    
+    //UIImageJPEGRepresentation(uploadImg, 1.0) 将UIImage转换成二进制文件，并以原比例保存图片
+
+    [CCInterface requestUploadHeadImg:UIImageJPEGRepresentation(uploadImg, 1.0) backBlock:^(int status, NSDictionary *dictResult) {
+        
+        NSLog(@"上传图片结果 %@",dictResult);
+        
+        //退出imagePickerView控制器
+        
+        [picker dismissViewControllerAnimated:YES completion:nil];
+
+        if (status == 200) {
+            if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                
+                //保存个性图像的imgURL,此路径为服务器中UIImage的路径
+
+                userModel.user_headImgUrl = [dictResult objectForKey:@"avatar_url"];
+                
+                //设置headerView中UIImage中图像
+
+                ((UIImageView *)[self.view viewWithTag:199]).image = uploadImg;
+
+            } else {
+                [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+            }
+        }
+    }];
+
+}
 
 
 
