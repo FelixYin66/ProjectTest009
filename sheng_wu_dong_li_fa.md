@@ -14,7 +14,7 @@
 | ```CountryViewController``` | 此代表的是展示所有的国家视图控制器 |
 | -- | -- |
 | ```CountryTableViewCell``` | 此代表的是单个国家记录视图，是UITableView中的一个子控件 |
-| ```CityModel``` |  |
+| ```CityModel``` | 此代表的是数据实体对象<城市实体> |
 
 
 
