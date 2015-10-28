@@ -236,6 +236,91 @@
 ![修改密码](修改密码.png)
 
 
+```swift
+
+
+///  点击“确认”按钮触发事件
+
+
+-(void)loginEvent {
+    
+    
+    //旧密码
+
+    NSString *pwStr1 = ((CSTextField *)[self.view viewWithTag:100]).text;
+    
+    //新密码
+    
+    NSString *pwStr2 = ((CSTextField *)[self.view viewWithTag:101]).text;
+    
+    //确认密码
+    
+    NSString *pwStr3 = ((CSTextField *)[self.view viewWithTag:102]).text;
+    
+    
+    //除去三个输入框中的空格
+
+    pwStr1 = [pwStr1 stringByReplacingOccurrencesOfString:@" " withString:@""];
+    pwStr2 = [pwStr2 stringByReplacingOccurrencesOfString:@" " withString:@""];
+    pwStr3 = [pwStr3 stringByReplacingOccurrencesOfString:@" " withString:@""];
+
+    NSString *message = nil;
+    
+    
+    //输入框信息验证
+
+    if (pwStr1.length == 0) {
+        message = @"当前密码不能为空";
+        [SVProgressHUD showErrorWithStatus:message];
+    } else if (pwStr2.length == 0) {
+        message = @"新密码不能为空";
+        [SVProgressHUD showErrorWithStatus:message];
+    } else if (pwStr3.length == 0) {
+        message = @"确认新密码不能为空";
+        [SVProgressHUD showErrorWithStatus:message];
+    } else if (pwStr2.length<6 || pwStr3.length>20) {//|| pwStr2.length>11 || pwStr3.length>11
+        message = @"请输入6-20位新密码";
+        [SVProgressHUD showErrorWithStatus:message];
+    }else if (![pwStr2 isEqualToString:pwStr3]) {
+        message = @"两次输入新密码不一致";
+        [SVProgressHUD showErrorWithStatus:message];
+    }else if ([pwStr1 isEqualToString:pwStr2]){
+        message = @"当前密码与新密码重复";
+        [SVProgressHUD showErrorWithStatus:message];
+    } else {
+        
+        //格式正确，发送”修改密码“请求
+
+        [CCInterface requestUpdatePassWord:pwStr1 newPW:pwStr2 backBlock:^(int status, NSDictionary *dictResult) {
+
+            NSLog(@"dict is %@",dictResult);
+            
+            if (status == 200) {
+                if ([[dictResult objectForKey:@"status"] isEqualToString:statusSuccess]) {
+                    
+                    //修改成功提醒
+                    
+                    [SVProgressHUD showSuccessWithStatus:[dictResult objectForKey:@"msg"]];
+                    [self.navigationController popViewControllerAnimated:YES];
+                } else {
+                    
+                    //错误提醒
+                    
+                    [SVProgressHUD showErrorWithStatus:[dictResult objectForKey:@"msg"]];
+                }
+            }
+        }];
+        
+    }
+}
+
+
+
+
+
+```
+
+
 意见反馈：
 
 ![意见反馈](意见反馈.png)
