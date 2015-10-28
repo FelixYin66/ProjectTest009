@@ -313,6 +313,89 @@
 
 
 
+///  单个时间的cell
+///
+///  @param tableView 展示生物动力法日历视图
+///  @param indexPath 当前cell的索引
+///
+///  @return 返回自定义的cell
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *cellIdentifier = @"cell";
+    
+    //创建单个日历的Cell
+    
+    CalendarTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    
+    //判断是否有
+    
+    if (cell == nil) {
+        cell = [[CalendarTableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+        cell.backgroundColor = [UIColor clearColor];
+    }
+    
+    
+//  拿到当前row对应月份所有”日“  keyArr 为 01，02，03，04 月份数组
+    
+    NSArray *sectionArr = [_myDict objectForKey:[keyArr objectAtIndex:indexPath.section]];
+    
+    
+    
+    
+/*
+ 
+ _myDict中单个选项的内容
+ 
+ {
+	attr = 空;
+	time = 00:00,23:00;
+	date = 2015-02-24;
+	type = 空-根;
+	moon = 下;
+ }
+ 
+ NSLog(@"都有什么信息%@",_myDict);
+ 
+ 
+ 
+ */
+    
+    
+/*
+    
+//    NSDictionary *lastRowDict = [NSDictionary dictionary];
+//    
+//    if (indexPath.row != 0) {
+//        
+//        //sectionArr 为当前月份中所有日的数组集合
+//        
+//        //获取
+//        
+//        lastRowDict = [sectionArr objectAtIndex:indexPath.row-1];
+//    } else {
+//        
+//        //当indexPath.row = 0时
+//        
+//        if (indexPath.section!=0) {
+//            lastRowDict = [[_myDict objectForKey:[keyArr objectAtIndex:indexPath.section-1]] lastObject];
+//        }
+//        
+//    }
+ 
+ */
+    
+    // 获取当前组对应row的数据
+    
+    NSDictionary *rowDict = [sectionArr objectAtIndex:indexPath.row];
+
+    [cell setDataDict:rowDict];
+    
+    return cell;
+}
+
+
 
 ```
 
