@@ -247,6 +247,21 @@
 
 ```swift
 
+  } else if (actionSheet.tag == 2888) {
+        
+        if (buttonIndex == 1) {
+            
+            
+            //退出登录时，进入到登录界面
+
+            AppDelegate *dele = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+            [dele userLogin];
+            
+            //当用户退出登录，发送UserIDChangeNoti通知
+            [[NSNotificationCenter defaultCenter] postNotificationName:UserIDChangeNoti object:nil];
+        }
+
+    }
 
 
 
