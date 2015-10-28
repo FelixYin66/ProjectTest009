@@ -475,6 +475,19 @@
 }
 
 
+
+
+//返回对索引的cell
+
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+    DetailCollectionViewCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:@"CollectionViewIdentifier" forIndexPath:indexPath];
+    cell.myDict = [[_myDict objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
+   
+    return cell;
+};
+
+
 ```
 
 
