@@ -13,7 +13,7 @@
 
 | ```CountryViewController``` | 此代表的是展示所有的国家视图控制器 |
 | -- | -- |
-| ```CountryTableViewCell``` | 此代表的是单个国家 |
+| ```CountryTableViewCell``` | 此代表的是单个国家记录的 |
 | ```CityModel``` | 1:3 |
 
 
