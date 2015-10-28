@@ -14,7 +14,7 @@
 | ```CountryViewController``` | 1:0 |
 | -- | -- |
 | ```CountryTableViewCell``` | 1:2 |
-| `````` | 1:3 |
+| ```CityModel``` | 1:3 |
 
 
 
