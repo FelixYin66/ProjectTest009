@@ -219,6 +219,95 @@
 
 ```swift
 
+///  加载网络数据，并解析数据成model实体...
+
+-(void)getDataSource {
+    
+    //判断当前要展示的城市，并取出数据
+    NSString *cityStr =  [[NSUserDefaults standardUserDefaults] objectForKey:@"cityName"];
+    _myDict = [LocalData getDictFromFilePath:@"cityData"];
+    
+    if ([_myDict count]==0) {
+        
+        [CCInterface requestGetData:cityStr callBack:^(int status, NSDictionary *dictResult) {
+            NSLog(@"dict is %@",dictResult);
+            
+            if (status == 200) {
+                if ([[dictResult objectForKey:@"success"] integerValue] ==1) {
+                    
+                    [[NSUserDefaults standardUserDefaults] setObject:@"YES" forKey:@"DATA"];
+                    
+                    NSString *lastRiziName = nil;
+                    
+                    //存储新数据的字典
+                    NSMutableDictionary *newDict = [NSMutableDictionary dictionary];
+                    for (int i=0; i<keyArr.count; i++) {
+                        //存储新月份数据的数组
+                        NSMutableArray *newArr = [NSMutableArray array];
+                        
+                        //取出每一个月的数据
+                        NSArray *sectionArr = [[dictResult objectForKey:@"data"] objectForKey:[keyArr objectAtIndex:i]];
+                        //遍历每月的每一天
+                        
+                        for (int j=0; j<sectionArr.count; j++) {
+                            //存储新数据每一天数据
+                            NSMutableDictionary *newData = [NSMutableDictionary dictionary];
+                            [newData setObject:[sectionArr[j] objectForKey:@"attr"] forKey:@"attr"];
+                            [newData setObject:[sectionArr[j] objectForKey:@"time"] forKey:@"time"];
+                            [newData setObject:[sectionArr[j] objectForKey:@"date"] forKey:@"date"];
+                            [newData setObject:[sectionArr[j] objectForKey:@"moon"] forKey:@"moon"];
+                            NSArray *typeArr = [[sectionArr[j] objectForKey:@"type"] componentsSeparatedByString:@"-"];
+                            
+                            NSMutableArray *newTypeArr = [NSMutableArray array];
+                            for (int k=0; k<typeArr.count; k++) {
+                                
+                                lastRiziName = typeArr[k];
+                                
+                                [newTypeArr addObject:lastRiziName];
+
+                            }
+                            NSString *newTypeStr = nil;
+                            for (int m=0; m<newTypeArr.count; m++) {
+                                if (m!=0) {
+                                    newTypeStr = [NSString stringWithFormat:@"%@-%@",newTypeStr,newTypeArr[m]];
+                                } else {
+                                    newTypeStr = newTypeArr[0];
+                                }
+                            }
+                            
+                            [newData setObject:newTypeStr forKey:@"type"];
+                            
+                            [newArr addObject:newData];
+                            
+                        }
+                        
+                        [newDict setObject:newArr forKey:keyArr[i]];
+                    }
+                    
+                    //存储当前城市数据
+                    [LocalData saveDictToFile:newDict path:@"cityData"];
+                    //存储当前城市数据版本号
+                    
+                    _myDict = newDict;
+                    
+
+                    [SVProgressHUD showSuccessWithStatus:@"数据加载成功"];
+                    
+                } else  {
+                    [SVProgressHUD showErrorWithStatus:@"数据加载失败):"];
+                }
+            } else {
+                [SVProgressHUD showErrorWithStatus:@"数据加载失败):"];
+            }
+            
+        }];
+    }
+    
+    // 刷新UITableView的数据
+    
+    [myTable reloadData];
+    
+}
 
 
 
