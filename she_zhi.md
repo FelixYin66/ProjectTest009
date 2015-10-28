@@ -247,7 +247,7 @@
 
 ```swift
 
-  } else if (actionSheet.tag == 2888) {
+  if (actionSheet.tag == 2888) {
         
         if (buttonIndex == 1) {
             
