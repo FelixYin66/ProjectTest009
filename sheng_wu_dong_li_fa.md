@@ -408,7 +408,74 @@
 
 ![日期详情](日期详情.png)
 
+```swift
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.title = @"日历详情";
+    self.navigationItem.leftBarButtonItem = [self createLeftNavMainBtn:@"icon-calen" andTitle:nil];
+    self.navigationItem.rightBarButtonItem = [self createRightNavMainBtn:@"icon_share" andTitle:nil];
+    
+    
+    bgImgView = [[UIImageView alloc]initWithFrame:self.view.bounds];
+    bgImgView.image = [UIImage imageNamed:@"详情-背景图-叶"];
+    [self.view addSubview:bgImgView];
+    
+    
+    keyArr = [NSArray arrayWithObjects:@"01", @"02", @"03", @"04", @"05", @"06", @"07", @"08", @"09", @"10", @"11", @"12", nil];
+    
+    //加载所有的数据
+
+    [self getDataSource];
+
+    //添加内容视图，内容视图为UICollectionView...使用UICollectionView的好处就是，可实现左右滑动
+    
+    
+    //设置UICollectionView的布局方式
+    
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+    
+    //滚动方向
+    [layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+    
+    //组与组之间的间距
+    layout.sectionInset = UIEdgeInsetsZero;
+    layout.minimumLineSpacing = 0;
+    
+    //单个cell的大小
+    layout.itemSize = CGSizeMake(UIWidth,UIHeight);
+    
+    
+    //创建内容视图
+    
+    myCollectionView = [[UICollectionView alloc]initWithFrame:self.view.bounds collectionViewLayout:layout];
+    myCollectionView.pagingEnabled = YES;
+    myCollectionView.delegate = self;
+    myCollectionView.dataSource = self;
+    myCollectionView.backgroundColor = [UIColor clearColor];
+    [myCollectionView registerClass:[DetailCollectionViewCell class] forCellWithReuseIdentifier:@"CollectionViewIdentifier"];
+    [self.view addSubview:myCollectionView];
+
+    
+    //创建“今”按钮
+    
+    todayBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    todayBtn.frame = CGRectMake(UIWidth-50*AutoSizeScale, 0*AutoSizeScale, 50*AutoSizeScale, 50*AutoSizeScale);
+    [todayBtn setImage:[UIImage imageNamed:@"日历-今"] forState:UIControlStateNormal];
+    [todayBtn addTarget:self action:@selector(setContentPoint) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:todayBtn];
+    
+    
+    dele = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+    
+    //定位到今天的“生物动力法”日
+    
+    [self setContentPoint];
+}
+
+
+```
 
 
 
