@@ -3,7 +3,7 @@
 "天朝闹钟"是一款为上班人士定制的一款闹钟App,其界面为卡通元素，有幽默的特点，使用时可放松片刻.
 
 
-| ```ViewController``` | 此为主要的视图控制器 |
+| ```ViewController``` | 此为主要的视图控制器，其中包含子控件 |
 | -- | -- |
 | ```MoreView``` | 此为展示更多视图 |
 | ```ApplicationViewController``` | 此为展示所需要推荐到App控制器 |
