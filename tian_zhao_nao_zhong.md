@@ -594,6 +594,88 @@
 
 
 ```swift
+//当向右滑动时调用此方法，展示左边的视图
+
+-(void)leftShow {
+    
+    leftHidden =NO;
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    //判断是否是第一次进入”更多“界面
+    if (![userDefaults objectForKey:@"FirstMore"]){
+        [self performSelector:@selector(teachViewEvent) withObject:nil afterDelay:0.5];
+    }
+    
+    //创建”更多“视图
+    
+    if (_moreView==nil) {
+        _moreView = [[MoreView alloc]initWithFrame:CGRectMake(-320, 0, UIWidth, UIHeight)];
+        typeof(self) bself = self;
+        [_moreView moreBack:^{
+            [bself aboutBackEvent];
+        }];
+        [self.view addSubview:_moreView];
+        [_moreView release];
+        
+        double delayInSeconds = 0.1;
+        
+        //使用GCD延迟操作
+        
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        
+        //延迟操作，展示更多界面的内容
+        
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            
+            //以动画的形式展示
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                
+                _moreView.frame=CGRectMake(-80, 0, UIWidth, UIHeight);
+                _mainView.frame=CGRectMake(240, 0, UIWidth, UIHeight);
+                
+                if (aboutBackBtn==nil) {
+                    
+                    //创建返回按钮，按钮是透明的，只需tap一下就可以跳到”MainView“界面
+                    
+                    aboutBackBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+                    aboutBackBtn.frame=CGRectMake(240, UIY, 80, UIHeight);
+                    aboutBackBtn.backgroundColor=[UIColor clearColor];
+                    
+                    [aboutBackBtn addTarget:self action:@selector(aboutBackEvent) forControlEvents:UIControlEventTouchUpInside];
+                    [self.view addSubview:aboutBackBtn];
+                    
+                    //给此按钮添加一个向”左“的滑动手势，可以实现滑动返回到”MainView“
+                    UISwipeGestureRecognizer *recognizer;
+                    recognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(aboutBackEvent)];
+                    [recognizer setDirection:(UISwipeGestureRecognizerDirectionLeft)];
+                    [aboutBackBtn addGestureRecognizer:recognizer];
+                    [recognizer release];
+                    
+                }else {
+                    
+                    //让aboutBackBtn显示
+                    
+                    aboutBackBtn.hidden=NO;
+                }
+            }];
+            
+            //改变aboutBackBtn的位置
+            
+            [self.view bringSubviewToFront:aboutBackBtn];
+            
+            if (leftLook) {
+                [self.view bringSubviewToFront:[self.view viewWithTag:999]];
+            }
+
+        });
+    }
+    
+    statusView.alpha = 1;
+    [self.view bringSubviewToFront:statusView];
+
+}
 
 
 ```
