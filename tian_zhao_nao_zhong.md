@@ -934,6 +934,70 @@ App详情页：
 
 ```swift
 
+//按钮点击事件，可查看应用的详情与跳转到AppStroe下载应用
+
+-(void)moreEvent:(UIButton *)sender {
+    
+    //当 tag < 103 时 调出详情页面
+    
+    if (sender.tag < 103) {
+        
+        //动画开始出现，调出设置界面
+        //0.8秒的时间，让conteview从底部移动到self可见区域。
+        appMark=sender.tag-100;
+        [UIView animateWithDuration:0.5 animations:^{
+            
+            //动画改变视图的frame，实现动画展示
+            
+            if (UIHeight==480) {
+                moreView.image=[UIImage imageNamed:[NSString stringWithFormat:@"bg_应用墙_应用%ld-480.png",sender.tag-100]];
+                moreView.frame = CGRectMake(0, self.view.bounds.size.height-388, 320,388);
+            }else {
+                moreView.image=[UIImage imageNamed:[NSString stringWithFormat:@"bg_应用墙_应用%ld.png",sender.tag-100]];
+                moreView.frame = CGRectMake(0, self.view.bounds.size.height-440, 320,440);
+            }
+            bgImgView.userInteractionEnabled = NO;
+            
+        }];
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            
+            //默认先给底层视图，先根据x轴，旋转 M_PI/10角度
+            CATransform3D transformRote = CATransform3DMakeRotation(M_PI/10, 1, 0, 0);
+            bgImgView.layer.transform = transformRote;
+            blackView.alpha = 0.15;
+            
+        } completion:^(BOOL finished) {
+            
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                
+                //Translation和scale配合起来使用，才能达到远离肉眼的效果。
+                CATransform3D transform  = CATransform3DMakeTranslation(0, 0,-100);
+                
+                CATransform3D transfromSclae = CATransform3DMakeScale(0.9, 0.9, 1);
+                //创建一个动画组，添加2个3D效果。
+                CATransform3D transformGroup = CATransform3DConcat(transform, transfromSclae);
+                
+                bgImgView.layer.transform = transformGroup;
+                
+                
+                blackView.alpha = 0.4;
+                
+            }];
+        }];
+        
+    // 当tag值为 103 ---> 105 时 即点击了”下载“ 按钮
+
+    } else if (sender.tag==103) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/peng-peng-ri-cheng/id658161325?mt=8"]];
+    } else if (sender.tag==104) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/cn/app/hei!-jiao-shou/id599822708?mt=8"]];
+    } else if (sender.tag==105) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/cn/app/man-tian-huo-liii/id647126291?mt=8"]];
+    }
+}
 
 
 
