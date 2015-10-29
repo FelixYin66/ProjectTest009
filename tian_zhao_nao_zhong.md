@@ -687,6 +687,81 @@
 
 ```swift
 
+//当向左滑动时调用此方法，展示右边的视图
+
+-(void)rightShow {
+    
+    //当没有右边视图时，就创建
+    
+    if (_shareView==nil) {
+        _shareView = [[ShareView alloc]initWithFrame:CGRectMake(320, 0, UIWidth, UIHeight)];
+        
+        //使用typeof 防止循环引用
+        
+        typeof(self) bself = self;
+        [_shareView shareBack:^{
+            [bself shareBackEvent];
+        }];
+        [self.view addSubview:_shareView];
+        [_shareView release];
+        
+        
+        //使用GCD 延迟操作，展示右边视图
+        
+        double delayInSeconds = 0.1;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            
+            //使用动画的形式展示视图
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                _shareView.frame=CGRectMake(80, 0, UIWidth, UIHeight);
+                _mainView.frame=CGRectMake(-240, 0, UIWidth, UIHeight);
+                
+                
+                //创建一个shareBackBtn 按钮 ，此按钮为透明
+                
+                if (shareBackBtn==nil) {
+                    shareBackBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+                    shareBackBtn.frame=CGRectMake(0, UIY, 80, UIHeight);
+                    shareBackBtn.backgroundColor=[UIColor clearColor];
+                    
+                    //给按钮添加一个TouchUpInside事件，点击就可返回到“MainView”
+                    
+                    [shareBackBtn addTarget:self action:@selector(shareBackEvent) forControlEvents:UIControlEventTouchUpInside];
+                    [self.view addSubview:shareBackBtn];
+                    
+                    
+                    //按钮添加一个手势“Tap” 点击旁边就可实现返回到“MainView”界面
+                    
+                    UISwipeGestureRecognizer *recognizer;
+                    recognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(shareBackEvent)];
+                    [recognizer setDirection:(UISwipeGestureRecognizerDirectionRight)];
+                    [shareBackBtn addGestureRecognizer:recognizer];
+                    [recognizer release];
+                }else {
+                    
+                    //当按钮已存在时，显示此按钮
+                    
+                    shareBackBtn.hidden=NO;
+                }
+            }];
+            
+            //设置shareBackBtn的位置
+
+            [self.view bringSubviewToFront:shareBackBtn];
+        });
+        
+    }
+    
+    rightHidden =NO;
+
+    //此句没有作用
+    
+    statusView.alpha = 1;
+    
+    [self.view bringSubviewToFront:statusView];
+}
 
 
 
