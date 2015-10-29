@@ -6,7 +6,7 @@
 | ```ViewController``` | 1:0 |
 | -- | -- |
 | ```MoreView``` | 1:2 |
-| ```ApplicationViewController``` | 1:3 |
+| ```ApplicationViewController``` | 此为展示所需要推荐到App |
 
 
 
