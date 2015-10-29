@@ -779,6 +779,145 @@
 
 ```swift
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	// Do any additional setup after loading the view.
+    appMark=0;
+    self.view.backgroundColor = [UIColor blackColor];
+    //应用墙列表展示页面   此图片上已经有应用的样图
+    bgImgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, UIY, UIWidth, UIHeight)];
+    [bgImgView setImageName:@"bg_应用墙_背景.png"];
+    [self.view addSubview:bgImgView];
+    [bgImgView release];
+    bgImgView.userInteractionEnabled=YES;
+    
+    
+    //创建返回按钮
+    
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    backBtn.frame = CGRectMake(11, 40, 78, 41);
+    [backBtn setImage:[UIImage imageNamed:@"btn_应用墙_看完了.png"] forState:UIControlStateNormal];
+    [backBtn setImage:[UIImage imageNamed:@"btn_应用墙_看完了按下.png"] forState:UIControlStateHighlighted];
+    [backBtn addTarget:self action:@selector(backEvent) forControlEvents:UIControlEventTouchUpInside];
+    [bgImgView addSubview:backBtn];
+    
+    
+    //循环创建6个按钮分别对应不同的应用不同的位置
+    
+    for (int i=0; i<6; i++) {
+        UIButton *moreBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        
+        //i < 3 创建的是"详情"按钮
+        if (i<3) {
+            if (UIHeight==480) {
+                moreBtn.frame=CGRectMake(150, 191+118*i, 72, 33);
+            }else {
+                moreBtn.frame=CGRectMake(150, 231+134*i, 72, 33);
+            }
+            [moreBtn setImage:[UIImage imageNamed:@"btn_应用墙_详情.png"] forState:UIControlStateNormal];
+            [moreBtn setImage:[UIImage imageNamed:@"btn_应用墙_详情按下.png"] forState:UIControlStateHighlighted];
+            
+        //i > = 3 时 创建的是下载应用按钮
+            
+        }else {
+            if (UIHeight==480) {
+                moreBtn.frame=CGRectMake(231, 191+118*(i-3), 72, 33);
+            }else {
+                moreBtn.frame=CGRectMake(231, 231+134*(i-3), 72, 33);
+            }
+            [moreBtn setImage:[UIImage imageNamed:@"btn_应用墙_下载.png"] forState:UIControlStateNormal];
+            [moreBtn setImage:[UIImage imageNamed:@"btn_应用墙_下载按下.png"] forState:UIControlStateHighlighted];
+        }
+
+        //给按钮设置不同的tag值
+        
+        moreBtn.tag=100+i;
+        
+        //给按钮设置对应的时间
+        
+        [moreBtn addTarget:self action:@selector(moreEvent:) forControlEvents:UIControlEventTouchUpInside];
+        [bgImgView addSubview:moreBtn];
+    }
+    
+    
+    
+    
+    /*
+     CALayer默认使用正交投影，因此没有远小近大效果，而且没有明确的API可以使用透视投影矩阵
+     加上下面3句代码就可以实现了。
+     */
+    
+    CATransform3D scale = CATransform3DIdentity;
+    scale.m34 = -1.0f/900;
+    self.view.layer.sublayerTransform = scale;
+    
+    blackView = [[UIView alloc]initWithFrame:self.view.bounds];
+    blackView.backgroundColor = [UIColor blackColor];
+    blackView.alpha = 0;
+    [self.view addSubview:blackView];
+    
+    //z越大的话，离人眼的距离就大。
+    CATransform3D transform  = CATransform3DMakeTranslation(0, 0,100);
+    blackView.layer.transform = transform;
+    
+    
+    //创建点击了“详情”后的详情页
+    
+    moreView = [[UIImageView alloc]init];
+    
+    if (UIHeight==480) {
+        moreView.frame = CGRectMake(0, UIHeight, UIHeight, 388);
+    }else {
+        moreView.frame = CGRectMake(0, UIHeight, UIWidth, 440);
+    }
+    
+    [self.view addSubview:moreView];
+    [moreView release];
+    
+    moreView.userInteractionEnabled = YES;
+    
+    
+    //创建lookoverBtn按钮，并添加到moreView上
+    
+    UIButton *lookoverBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    
+    //小屏手机
+    
+    if (UIHeight==480) {
+        lookoverBtn.frame=CGRectMake(27, 330, 125, 47);
+        
+    //大屏手机
+    }else {
+        lookoverBtn.frame=CGRectMake(27, 370, 125, 47);
+    }
+    
+    //设置背景图片
+    [lookoverBtn setImage:[UIImage imageNamed:@"btn_应用墙_再看看.png"] forState:UIControlStateNormal];
+    [lookoverBtn setImage:[UIImage imageNamed:@"btn_应用墙_再看看按下.png"] forState:UIControlStateHighlighted];
+    
+    //绑定事件
+    [lookoverBtn addTarget:self action:@selector(lookoverEvent) forControlEvents:UIControlEventTouchUpInside];
+    [moreView addSubview:lookoverBtn];
+    
+    UIButton *downBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    if (UIHeight==480) {
+        downBtn.frame=CGRectMake(177, 330, 125, 47);
+    }else {
+        downBtn.frame=CGRectMake(177, 370, 125, 47);
+    }
+    [downBtn setImage:[UIImage imageNamed:@"btn_应用墙_下载吧.png"] forState:UIControlStateNormal];
+    [downBtn setImage:[UIImage imageNamed:@"btn_应用墙_下载吧按下.png"] forState:UIControlStateHighlighted];
+    [downBtn addTarget:self action:@selector(downEvent) forControlEvents:UIControlEventTouchUpInside];
+    [moreView addSubview:downBtn];
+    
+    
+    //把_setclockView的距离放到最靠前，这样的话，遮罩view不会挡住。
+    CATransform3D transform1 = CATransform3DMakeScale(0.89, 0.89, 1.0);
+    CATransform3D transform2  = CATransform3DMakeTranslation(0, 0, 100);
+    CATransform3D transform3 = CATransform3DConcat(transform1, transform2);
+    moreView.layer.transform = transform3;
+}
 
 
 
